@@ -52,55 +52,7 @@ Server runs at `http://localhost:3000`
 
 ---
 
-## 🎯 API Endpoints
 
-### 🌐 Root Route
-
-**GET /**  
-Response: `"Hello World"`
-
-### 🤖 AI Code Review
-
-**GET /ai/get-review?prompt=your_code_here**
-
-- **Query Parameters:** `prompt` (required)
-- **Response:** AI-generated code review based on the given code snippet
-
-**Example Request:**
-```sh
-curl "http://localhost:3000/ai/get-review?prompt=const a = 10;"
-```
-
-**Example Response:**
-```json
-{
-  "suggestions": [
-    "Consider using 'let' or 'const' based on whether the variable is reassigned.",
-    "Ensure the variable name is descriptive to improve readability."
-  ]
-}
-```
-
----
-
-## 📂 Project Structure
-
-```
-/src
- ├── controllers
- │   ├── ai.controller.js
- ├── routes
- │   ├── ai.routes.js
- ├── services
- │   ├── ai.services.js
- ├── app.js
- ├── server.js
- ├── .env
- ├── package.json
- ├── README.md
-```
-
----
 
 ## 🤝 Contributing
 
