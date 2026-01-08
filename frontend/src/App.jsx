@@ -11,21 +11,37 @@ import axios from "axios";
 function App() {
   const [code, setCode] = useState("");
   const [review, setReview] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
   useEffect(() => {
     prism.highlightAll();
   }, [code]);
 
   async function reviewCode() {
-    try {
-      const response = await axios.post("http://localhost:3000/ai/get-review/", { code });
+    if (!code.trim()) {
+      setReview("⚠️ Please enter some code to review.");
+      return;
+    }
 
-      // Properly formatted review output for Markdown
-      const formattedReview = `### AI Code Review:\n\n\`\`\`javascript\n${response.data.review || response.data}\n\`\`\``;
-      setReview(formattedReview);
+    setLoading(true);
+    setReview("🔄 Analyzing your code...");
+
+    try {
+      const response = await axios.post(`${API_URL}/ai/get-review`, { code });
+
+      if (response.data.success) {
+        setReview(response.data.review);
+      } else {
+        setReview("⚠️ " + (response.data.error || "Failed to analyze code"));
+      }
     } catch (error) {
       console.error("Error fetching review:", error);
-      setReview("⚠️ Error fetching review. Please try again.");
+      const errorMsg = error.response?.data?.error || "Error connecting to server. Please try again.";
+      setReview(`⚠️ ${errorMsg}`);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -77,9 +93,10 @@ function App() {
 
           <button
             onClick={reviewCode}
-            className="w-full mt-5 py-3 text-lg font-medium text-white bg-slate-950 hover:bg-zinc-400 rounded-lg shadow-md transition duration-300"
+            disabled={loading || !code.trim()}
+            className="w-full mt-5 py-3 text-lg font-medium text-white bg-slate-950 hover:bg-zinc-400 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg shadow-md transition duration-300"
           >
-            Analyze Code 🤖
+            {loading ? "Analyzing... ⏳" : "Analyze Code 🤖"}
           </button>
         </div>
 
